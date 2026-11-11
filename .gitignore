@@ -1,0 +1,54 @@
+# Maven
+target/
+.mvn/wrapper/maven-wrapper.jar
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+
+# Java
+*.class
+*.log
+hs_err_pid*
+replay_pid*
+
+# Secretos y configuracion local
+.env
+.env.*
+!.env.example
+
+# Volumenes y datos locales de Docker / bases de datos
+volumes/
+data/
+mongo-data/
+sonarqube-data/
+postgres-data/
+
+# SonarQube
+.sonar/
+.scannerwork/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.cursor/
+.classpath
+.project
+.settings/
+.factorypath
+.apt_generated/
+.springBeans
+.sts4-cache/
+nbproject/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
