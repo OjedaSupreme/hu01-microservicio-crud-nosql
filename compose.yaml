@@ -1,6 +1,10 @@
 # Entorno LOCAL de desarrollo para la HU-01.
 #
 #   docker compose up -d mongo        -> MongoDB para ejecutar el microservicio
+#   docker compose up -d sonarqube    -> SonarQube Community + su PostgreSQL
+#
+# Las credenciales sonar/sonar son valores por defecto SOLO para uso local.
+# Pueden sustituirse con variables de entorno o un archivo .env (ignorado por git).
 name: hu01-estudiantes
 
 services:
@@ -17,5 +21,41 @@ services:
       timeout: 5s
       retries: 10
 
+  sonar-db:
+    image: postgres:17
+    container_name: hu01-sonar-db
+    environment:
+      POSTGRES_USER: ${SONAR_DB_USER:-sonar}
+      POSTGRES_PASSWORD: ${SONAR_DB_PASSWORD:-sonar}
+      POSTGRES_DB: sonar
+    volumes:
+      - sonar_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${SONAR_DB_USER:-sonar} -d sonar"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  sonarqube:
+    image: sonarqube:community
+    container_name: hu01-sonarqube
+    depends_on:
+      sonar-db:
+        condition: service_healthy
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonar
+      SONAR_JDBC_USERNAME: ${SONAR_DB_USER:-sonar}
+      SONAR_JDBC_PASSWORD: ${SONAR_DB_PASSWORD:-sonar}
+    ports:
+      - "${SONAR_PORT:-9000}:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+
 volumes:
   mongo_data:
+  sonar_db_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
