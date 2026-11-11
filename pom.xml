@@ -23,6 +23,10 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<springdoc.version>3.0.0</springdoc.version>
+		<flapdoodle.spring.version>4.24.0</flapdoodle.spring.version>
+
+		<!-- Valor por defecto para que Surefire pueda expandir @{argLine}. -->
+		<argLine />
 	</properties>
 
 	<dependencies>
@@ -43,6 +47,19 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>${springdoc.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- MongoDB embebido: las pruebas de integracion no dependen de Docker. -->
+		<dependency>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo.spring4x</artifactId>
+			<version>${flapdoodle.spring.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -50,6 +67,15 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- Permite que Mockito se adjunte como agente en JDK 21 sin advertencias. -->
+					<argLine>@{argLine} -XX:+EnableDynamicAgentLoading</argLine>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
