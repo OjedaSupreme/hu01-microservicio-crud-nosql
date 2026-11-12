@@ -8,7 +8,7 @@
 
 **Repositorio:** <https://github.com/OjedaSupreme/hu01-microservicio-crud-nosql> (rama `main`)
 
-**Commit analizado:** `56857e4` (el código no cambia después; los commits posteriores solo agregan este reporte)
+**Commit analizado:** `56857e4` (el código no cambia después; los commits posteriores solo agregan este reporte y sus evidencias)
 
 ---
 
@@ -57,7 +57,7 @@ API REST sobre MongoDB. Todos los criterios de la HU-01 quedaron cumplidos y ver
 | 10 | Pruebas de integración | `EstudianteApiIntegrationTest`: `@SpringBootTest` + `@AutoConfigureMockMvc` contra MongoDB embebido; la colección se limpia antes de cada prueba | 24 pruebas en verde |
 | 11 | JaCoCo ≥ 80 % | Regla `check` en la fase `verify` con mínimo 0.80 de líneas y de ramas; solo se excluye `EstudiantesApplication` | 100 % de líneas y de ramas (sección 5) |
 | 12 | Análisis SonarQube | `sonar-maven-plugin`, `sonar-project.properties` y `compose.yaml` con SonarQube Community | Quality Gate `PASSED` (sección 6) |
-| 13 | Swagger UI operativo | springdoc-openapi en `/swagger-ui/index.html` | `swaggerUi_estaDisponible`, `openApi_describeLosEndpoints` y respuesta 200 en ejecución real |
+| 13 | Swagger UI operativo | springdoc-openapi en `/swagger-ui/index.html` | `swaggerUi_estaDisponible`, `openApi_describeLosEndpoints` y capturas de solicitudes reales (sección 8) |
 | 14 | Calidad de código | Inyección por constructor, sin Lombok, sin `System.out`, consultas derivadas de Spring Data (sin concatenación), sin secretos en el repositorio | 0 incidencias en SonarQube |
 
 ## 4. Diseño
@@ -242,10 +242,12 @@ Medidas del proyecto devueltas por `api/measures/component` (`docs/evidencias/so
 Análisis registrado por el servidor: `2026-11-11T23:55:23+0000`, revisión
 `56857e47a6797bb868006d5f1cb42848a6889401`.
 
-> No se incluye captura del panel web de SonarQube: el servidor exige iniciar sesión de forma interactiva y cambiar
-> la contraseña inicial, algo que corresponde hacer a quien administre la instancia. La evidencia son las
-> respuestas reales de su API. El panel se puede consultar en
-> <http://localhost:9000/dashboard?id=hu01-microservicio-crud-nosql> mientras el contenedor siga en ejecución.
+> **Evidencia pendiente del usuario: captura del panel web de SonarQube.** El panel exige iniciar sesión de forma
+> interactiva y, en el primer ingreso, elegir una contraseña nueva para `admin`. Esa decisión corresponde al dueño
+> de la instancia, por lo que no se cambió la contraseña, no se crearon usuarios y no se tomó la captura. Para
+> completarla: iniciar sesión en <http://localhost:9000/dashboard?id=hu01-microservicio-crud-nosql> (con el
+> contenedor en ejecución), capturar el panel y agregar la imagen a `docs/evidencias/`. Mientras tanto, la
+> evidencia del análisis son las respuestas reales de la API de SonarQube citadas arriba.
 
 ## 7. Verificación manual contra MongoDB real
 
@@ -279,7 +281,75 @@ por índice):
 ]
 ```
 
-## 8. Cómo reproducir
+## 8. Evidencias de los endpoints en Swagger UI
+
+Capturas de pantalla de Swagger UI (`http://localhost:8080/swagger-ui/index.html`) tomadas mientras el JAR del
+proyecto corría contra un contenedor `mongo:7` (puerto 27018). Cada solicitud se envió desde el navegador con
+**Try it out → Execute**; las imágenes muestran la solicitud enviada, el código HTTP y el cuerpo que respondió el
+servidor.
+
+- **Cómo se tomaron:** con el navegador integrado de Cursor, controlado por el protocolo de DevTools. La imagen
+  es la que entrega el propio navegador (`Page.captureScreenshot`), recortada al bloque de la operación. No se
+  editó ni retocó ninguna.
+- **Fecha y hora:** el encabezado `date` de las respuestas está en GMT (12 de noviembre de 2026, 00:12 a 00:15),
+  que corresponde al 11 de noviembre de 2026 entre las 18:12 y las 18:15, hora local (UTC−6).
+- **Datos:** las ocho capturas pertenecen a una misma sesión, en este orden: crear, listar, buscar, actualizar,
+  crear inválido, crear duplicado, buscar inexistente y eliminar. El estudiante creado tiene el id
+  `6af50469b61c8cf967e20584`. Al terminar, la colección quedó vacía.
+
+### 8.1 Crear un estudiante — `POST /api/estudiantes` → 201
+
+Crea el estudiante y responde `201 Created` con el recurso y el encabezado `Location`; el correo enviado como
+`Ana.Garcia@Colegio.EDU` se devuelve normalizado en minúsculas.
+
+![Swagger UI: POST /api/estudiantes responde 201](evidencias/swagger-01-post-crear-201.png)
+
+### 8.2 Listar estudiantes — `GET /api/estudiantes` → 200
+
+Responde `200 OK` con una lista que contiene el estudiante recién creado.
+
+![Swagger UI: GET /api/estudiantes responde 200 con un registro](evidencias/swagger-02-get-listar-200.png)
+
+### 8.3 Buscar por id — `GET /api/estudiantes/{id}` → 200
+
+Responde `200 OK` con el estudiante cuyo id se envió en la ruta.
+
+![Swagger UI: GET /api/estudiantes/{id} responde 200](evidencias/swagger-03-get-por-id-200.png)
+
+### 8.4 Actualizar — `PUT /api/estudiantes/{id}` → 200
+
+Reemplaza los datos del estudiante y responde `200 OK` con los valores nuevos, conservando el mismo id.
+
+![Swagger UI: PUT /api/estudiantes/{id} responde 200](evidencias/swagger-04-put-actualizar-200.png)
+
+### 8.5 Eliminar — `DELETE /api/estudiantes/{id}` → 204
+
+Elimina el estudiante y responde `204 No Content`, sin cuerpo.
+
+![Swagger UI: DELETE /api/estudiantes/{id} responde 204](evidencias/swagger-05-delete-eliminar-204.png)
+
+### 8.6 Datos inválidos — `POST /api/estudiantes` → 400
+
+Con nombre vacío, teléfono `abc` y correo sin formato, el manejador global responde `400 Bad Request` con el
+detalle por campo (`correo`, `nombre`, `telefono`).
+
+![Swagger UI: POST /api/estudiantes con datos inválidos responde 400](evidencias/swagger-06-post-invalido-400.png)
+
+### 8.7 Id inexistente — `GET /api/estudiantes/{id}` → 404
+
+Con un id que no existe, `RecursoNoEncontradoException` se traduce en `404 Not Found` con el cuerpo de error
+uniforme.
+
+![Swagger UI: GET /api/estudiantes/{id} con id inexistente responde 404](evidencias/swagger-07-get-inexistente-404.png)
+
+### 8.8 Correo duplicado — `POST /api/estudiantes` → 409
+
+Al crear otro estudiante con un correo ya registrado (enviado en mayúsculas, `ANA.MARIA@colegio.edu`),
+`DatoDuplicadoException` se traduce en `409 Conflict`.
+
+![Swagger UI: POST /api/estudiantes con correo duplicado responde 409](evidencias/swagger-08-post-duplicado-409.png)
+
+## 9. Cómo reproducir
 
 ```powershell
 git clone https://github.com/OjedaSupreme/hu01-microservicio-crud-nosql.git
@@ -299,11 +369,15 @@ $env:SONAR_TOKEN = "<token generado en SonarQube>"
 .\mvnw.cmd clean verify sonar:sonar "-Dsonar.qualitygate.wait=true"
 ```
 
-## 9. Observaciones
+## 10. Observaciones
 
-- **Criterios pendientes:** ninguno.
-- **Evidencias no incluidas:** no hay capturas de Postman (no se usó; la verificación manual se hizo con `curl`) ni
-  del panel web de SonarQube (ver la nota de la sección 6). No se fabricó ninguna imagen.
+- **Criterios pendientes:** ninguno en el código. Queda una evidencia pendiente del usuario, descrita más abajo.
+- **Evidencias de los endpoints:** las capturas del cliente HTTP están en la sección 8 y se tomaron en Swagger UI
+  con solicitudes reales. No se usó Postman.
+- **Evidencia pendiente del usuario:** la captura del panel web de SonarQube. Requiere que el usuario inicie sesión
+  y elija su contraseña (ver la nota de la sección 6). El resultado del análisis sí está respaldado por las
+  respuestas reales de la API de SonarQube.
+- **Imágenes:** ninguna fue fabricada ni editada.
 - **Primera ejecución de las pruebas:** descarga el binario de MongoDB 7.0.28 y tarda unos minutos; las siguientes
   usan la caché de `~/.embedmongo` (la ejecución final tardó 16 s).
 - **Puerto 27017 ocupado:** si la máquina ya tiene un MongoDB local en ese puerto, el contenedor puede publicarse en
