@@ -1,0 +1,82 @@
+[
+  {
+    "metric": "alert_status",
+    "value": "OK"
+  },
+  {
+    "metric": "branch_coverage",
+    "value": "100.0"
+  },
+  {
+    "metric": "bugs",
+    "value": "0"
+  },
+  {
+    "metric": "code_smells",
+    "value": "0"
+  },
+  {
+    "metric": "conditions_to_cover",
+    "value": "10"
+  },
+  {
+    "metric": "coverage",
+    "value": "100.0"
+  },
+  {
+    "metric": "duplicated_lines_density",
+    "value": "0.0"
+  },
+  {
+    "metric": "line_coverage",
+    "value": "100.0"
+  },
+  {
+    "metric": "lines_to_cover",
+    "value": "118"
+  },
+  {
+    "metric": "ncloc",
+    "value": "558"
+  },
+  {
+    "metric": "reliability_rating",
+    "value": "1.0"
+  },
+  {
+    "metric": "security_hotspots",
+    "value": "0"
+  },
+  {
+    "metric": "security_rating",
+    "value": "1.0"
+  },
+  {
+    "metric": "sqale_rating",
+    "value": "1.0"
+  },
+  {
+    "metric": "test_errors",
+    "value": "0"
+  },
+  {
+    "metric": "test_failures",
+    "value": "0"
+  },
+  {
+    "metric": "tests",
+    "value": "38"
+  },
+  {
+    "metric": "uncovered_conditions",
+    "value": "0"
+  },
+  {
+    "metric": "uncovered_lines",
+    "value": "0"
+  },
+  {
+    "metric": "vulnerabilities",
+    "value": "0"
+  }
+]

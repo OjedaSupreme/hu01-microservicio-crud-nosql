@@ -1,0 +1,19 @@
+> mvnw.cmd -B clean verify   (codigo de salida: 0)
+
+[INFO] Building hu01-microservicio-crud-nosql 0.0.1-SNAPSHOT
+[INFO] --- jacoco:0.8.14:prepare-agent (jacoco-prepare-agent) @ estudiantes ---
+[INFO] Running com.hu01.estudiantes.EstudianteApiIntegrationTest
+[INFO] Tests run: 24, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.177 s -- in com.hu01.estudiantes.EstudianteApiIntegrationTest
+[INFO] Running com.hu01.estudiantes.excepcion.ManejadorGlobalExcepcionesTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.903 s -- in com.hu01.estudiantes.excepcion.ManejadorGlobalExcepcionesTest
+[INFO] Running com.hu01.estudiantes.servicio.EstudianteServicioTest
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.572 s -- in com.hu01.estudiantes.servicio.EstudianteServicioTest
+[INFO] Results:
+[INFO] Tests run: 38, Failures: 0, Errors: 0, Skipped: 0
+[INFO] --- jacoco:0.8.14:report (jacoco-report) @ estudiantes ---
+[INFO] Building jar: C:\Users\fojed\OneDrive\Documents\GitHub\hu01-microservicio-crud-nosql\target\estudiantes-0.0.1-SNAPSHOT.jar
+[INFO] --- jacoco:0.8.14:check (jacoco-check) @ estudiantes ---
+[INFO] All coverage checks have been met.
+[INFO] BUILD SUCCESS
+[INFO] Total time:  16.424 s
+[INFO] Finished at: 2026-11-11T17:55:03-06:00
